@@ -1,51 +1,121 @@
-plugins {
-	id 'fabric-loom' version '0.11-SNAPSHOT'
-	id 'maven-publish'
+buildscript {
+    repositories {
+        maven {
+            name = 'Sponge'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.spongepowered:mixingradle:0.7.+'
+    }
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+plugins {
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+apply plugin: 'org.spongepowered.mixin'
+
+version = project.findProperty('skds_mod_version')
+group = 'net.skds.core'
+
+base {
+    archivesName = "skds_core-${minecraft_version}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                skds_core {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', 'skds_core'
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', 'skds_core'
+            args '--nogui'
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', 'skds_core'
+        }
+    }
+}
 
 repositories {
+    maven {
+        name = 'Sponge'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+    compileOnly 'org.spongepowered:mixin:0.8.5'
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-processResources {
-	inputs.property "version", project.version
+sourceSets.main.java.exclude(
+    'net/skds/core/mixins/multithreading/ChunkSectionMixin.java',
+    'net/skds/core/mixins/multithreading/PalettedContainerMixin.java',
+    'net/skds/core/mixins/multithreading/ServerChunkProviderMixin.java',
+    'net/skds/core/mixins/multithreading/ServerTickListMixin.jav',
+    'net/skds/core/mixins/custom/WorldMixin.java',
+    'net/skds/core/client/**'
+)
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+        minecraft_version: minecraft_version,
+        minecraft_version_range: minecraft_version_range,
+        forge_version: forge_version,
+        forge_version_range: forge_version_range,
+        loader_version_range: loader_version_range,
+        mod_id: 'skds_core',
+        mod_name: 'SKDS Core',
+        mod_version: version,
+        mod_license: 'All Rights Reserved',
+        mod_authors: project.findProperty('project_public_author'),
+        mod_description: 'Core runtime services shared by Water Physics Overhaul.'
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties
+    }
 }
 
-tasks.withType(JavaCompile).configureEach {
-	it.options.release = 17
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+            'MixinConfigs': 'mixins.skds_core.json',
+            'Specification-Title': 'skds_core',
+            'Specification-Vendor': project.findProperty('project_public_vendor'),
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': project.findProperty('project_public_vendor')
+        ])
+    }
+    finalizedBy 'reobfJar'
 }
 
-java {
-	withSourcesJar()
-}
-
-jar {
-}
-
-publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			from components.java
-		}
-	}
-	repositories {
-	}
+mixin {
+    add sourceSets.main, 'mixins.skds_core.refmap.json'
+    config 'mixins.skds_core.json'
 }

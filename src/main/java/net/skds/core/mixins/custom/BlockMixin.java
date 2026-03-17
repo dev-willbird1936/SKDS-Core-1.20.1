@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.skds.core.api.IBlockExtended;
 import net.skds.core.api.IBlockExtraStates;
 import net.skds.core.util.CustomBlockPars;
@@ -18,22 +18,22 @@ public class BlockMixin implements IBlockExtended, IBlockExtraStates {
 
 	private CustomBlockPars customBlockPars = new CustomBlockPars();
 
-	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/Block;fillStateContainer(Lnet/minecraft/state/StateContainer$Builder;)V"))
-	protected void aaa(Block b, StateContainer.Builder<Block, BlockState> builder) {
-		fillStateContainer(builder);
+	@Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/Block;createBlockStateDefinition(Lnet/minecraft/world/level/block/state/StateDefinition$Builder;)V"))
+	protected void aaa(Block b, StateDefinition.Builder<Block, BlockState> builder) {
+		createBlockStateDefinition(builder);
 		customStatesRegister(b, builder);
 	}
 
 	@Override
-	public void customStatesRegister(Block b, StateContainer.Builder<Block, BlockState> builder) {		
+	public void customStatesRegister(Block b, StateDefinition.Builder<Block, BlockState> builder) {		
 	}
 
 	@Shadow
-	protected final void setDefaultState(BlockState state) {
+	protected final void registerDefaultState(BlockState state) {
 	}
 
 	@Shadow
-	protected void fillStateContainer(Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
 	}
 
 	@Override

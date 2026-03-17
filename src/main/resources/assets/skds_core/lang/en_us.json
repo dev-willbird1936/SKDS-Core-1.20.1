@@ -1,0 +1,12 @@
+{
+	"skds_core": "SKDS Core",
+	"skds_core.config.performancePreset": "Performance Preset",
+	"skds_core.config.performancePreset.very_low": "Very Low",
+	"skds_core.config.performancePreset.low": "Low",
+	"skds_core.config.performancePreset.default": "Default",
+	"skds_core.config.performancePreset.high": "High",
+	"skds_core.config.performancePreset.very_high": "Very High",
+	"skds_core.config.performancePreset.custom": "Custom",
+	"skds_core.config.minBlockUpdates": "Manual Minimum Block Updates",
+	"skds_core.config.timeout": "Manual Timeout Cutoff"
+}

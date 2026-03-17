@@ -1,34 +1,24 @@
 package net.skds.core.multithreading;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.profiler.Profiler;
-import net.skds.core.SKDSConfig;
-import net.skds.core.util.blockupdate.WWSGlobal;
+import net.minecraftforge.common.MinecraftForge;
+import net.skds.core.SKDSCoreConfig;
+import net.skds.core.events.SyncTasksHookEvent;
 
 public class MTHooks {
-	public static final AtomicInteger COUNTS = new AtomicInteger(0);
-	public static volatile float TIME = 0;
+	public static int COUNTS = 0;
+	public static int TIME = 0;
 
-	private static ParallelExecutor executor = new ParallelExecutor();
+	public static void afterWorldsTick() {
+		TIME = SKDSCoreConfig.getTimeoutCutoff();
+		COUNTS = SKDSCoreConfig.getMinBlockUpdates();
 
-	public static void afterWorldsTick(Profiler profiler, MinecraftServer server) {		
-        profiler.push("SKDS Hooks");
+		MinecraftForge.EVENT_BUS.post(new SyncTasksHookEvent());
 
-		WWSGlobal.tickPreMTH();
-		
-		TIME = SKDSConfig.get().timeoutCutoff();
-		COUNTS.set(SKDSConfig.get().minTasks());
-
-		//TODO run event
-
+		///ThreadProvider.doSyncFork(WWSGlobal::nextTask);
 		try {
-			//executor.execute(task);
+			ThreadProvider.waitForStop();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		WWSGlobal.tickPostMTH();
-        profiler.pop();
 	}
 }

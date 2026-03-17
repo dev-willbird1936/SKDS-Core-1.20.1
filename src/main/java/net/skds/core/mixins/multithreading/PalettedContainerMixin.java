@@ -1,43 +1,45 @@
 package net.skds.core.mixins.multithreading;
 
-import java.util.concurrent.locks.ReentrantLock;
-
+import net.minecraft.world.level.chunk.PalettedContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.At;
-
-import net.minecraft.util.palette.PalettedContainer;
 
 @Mixin(value = { PalettedContainer.class })
-public class PalettedContainerMixin<T> {
+public abstract class PalettedContainerMixin<T> {
 
-	@Shadow
-	private final ReentrantLock lock = new ReentrantLock();
-
-	@Inject(method = "lock", at = @At(value = "HEAD"), cancellable = true)
-	public void lock(CallbackInfo ci) {
-		lock.lock();
-		ci.cancel();
+//	@Inject(method = "acquire", at = @At(value = "HEAD"), cancellable = true)
+//	public void acquire(CallbackInfo ci) {
+//		lock.acquireUninterruptibly();  // TODO have not found equivalent - therefore just locking normally, no inject required
+//		ci.cancel();
+//	}
+	@Mixin(value = {PalettedContainer.Strategy.class})
+	public abstract static class StrategyMixin{
+		@Shadow
+		public int getIndex(int x, int y, int z) {
+			return 0;
+		}
 	}
 
-	@Inject(method = "get", at = @At(value = "HEAD"), cancellable = true)
-	public synchronized void lockedSwap(int x, int y, int z, CallbackInfoReturnable<T> ci) {
+//	@Shadow public abstract void release();
+//
+//	@Shadow public abstract void acquire();
 
-		ci.setReturnValue(this.get(getIndex(x, y, z)));
-	}
+	// TODO inject was probably already redundant: static getIndex was already overridden and otherwise no different
+//	@Inject(method = "get(III)Ljava/lang/Object;", at = @At(value = "HEAD"), cancellable = true)
+//	public synchronized void get(int x, int y, int z, CallbackInfoReturnable<T> ci) {
+//
+//		ci.setReturnValue(this.get(this.strategy.getIndex(x, y, z)));
+//	}
 
 	//============================
-	@Inject(method = "lockedSwap", at = @At(value = "HEAD"), cancellable = true)
-	public synchronized void lockedSwap(int x, int y, int z, T state, CallbackInfoReturnable<T> ci) {
-	
-		lock.lock();
-		T t = this.doSwap(getIndex(x, y, z), state);
-		lock.unlock();
-		ci.setReturnValue(t);
-	}
+	// TODO inject was probably already redundant: static getIndex was already overridden and otherwise no different
+//	@Inject(method = "getAndSet(IIILjava/lang/Object;)Ljava/lang/Object;", at = @At(value = "HEAD"), cancellable = true)
+//	public synchronized void getAndSet(int x, int y, int z, T state, CallbackInfoReturnable<T> ci) {
+//		this.acquire();
+//		T t = this.getAndSet(this.strategy.getIndex(x, y, z), state);
+//		this.release();
+//		ci.setReturnValue(t);
+//	}
 	//=============================
 	@Shadow
 	protected T get(int index) {
@@ -45,12 +47,12 @@ public class PalettedContainerMixin<T> {
 	}
 
 	@Shadow
-	protected T doSwap(int index, T state) {
+	private T getAndSet(int index, T state) {
 		return null;
 	}
 
-	@Shadow
-	private static int getIndex(int x, int y, int z) {
-		return 0;
-	}
+	// @Overwrite
+	// public void unlock() {
+	// this.lock.unlock();
+	// }
 }
