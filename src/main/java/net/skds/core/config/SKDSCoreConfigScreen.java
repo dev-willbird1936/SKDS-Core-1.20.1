@@ -44,11 +44,14 @@ public class SKDSCoreConfigScreen extends Screen {
                 Component.translatable("skds_core.config.timeout"),
                 String.valueOf(SKDSCoreConfig.getManualTimeoutCutoff()));
 
+        this.addRenderableWidget(Button.builder(Component.literal("Defaults"), button -> loadDefaults())
+                .bounds(centerX - 154, this.height - 28, 100, 20)
+                .build());
         this.addRenderableWidget(Button.builder(Component.literal("Save"), button -> saveAndClose())
-                .bounds(centerX - 154, this.height - 28, 150, 20)
+                .bounds(centerX - 50, this.height - 28, 100, 20)
                 .build());
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, button -> onClose())
-                .bounds(centerX + 4, this.height - 28, 150, 20)
+                .bounds(centerX + 54, this.height - 28, 100, 20)
                 .build());
 
         updateManualFieldState();
@@ -66,6 +69,14 @@ public class SKDSCoreConfigScreen extends Screen {
         boolean custom = presetButton.getValue() == PerformancePreset.CUSTOM;
         minBlockUpdatesBox.active = custom;
         timeoutBox.active = custom;
+    }
+
+    private void loadDefaults() {
+        presetButton.setValue(SKDSCoreConfig.COMMON.performancePreset.getDefault());
+        minBlockUpdatesBox.setValue(String.valueOf(SKDSCoreConfig.COMMON.minBlockUpdates.getDefault()));
+        timeoutBox.setValue(String.valueOf(SKDSCoreConfig.COMMON.timeoutCutoff.getDefault()));
+        updateManualFieldState();
+        statusMessage = Component.literal("Defaults loaded. Press Save to apply.");
     }
 
     private void saveAndClose() {

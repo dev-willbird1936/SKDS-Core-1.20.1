@@ -8,7 +8,7 @@ import net.skds.core.SKDSCore;
 
 public class PacketHandler {
 	private static final String PROTOCOL_VERSION = "1";
-	private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(SKDSCore.MOD_ID, "network"), () -> PROTOCOL_VERSION, PROTOCOL_VERSION::equals, PROTOCOL_VERSION::equals);
+	private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(SKDSCore.MOD_ID, "network"), () -> PROTOCOL_VERSION, v -> true, v -> true);
 
 	public static void send(PacketDistributor.PacketTarget target, Object message) {
 		CHANNEL.send(target, message);
