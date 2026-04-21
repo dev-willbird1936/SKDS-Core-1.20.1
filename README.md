@@ -1,6 +1,6 @@
-# SKDS Core 1.20.1
+# SKDS Core
 
-Forge 1.20.1 port of SKDS Core.
+This repository currently targets Forge 1.20.1 on the active branch.
 
 ## What It Is
 
@@ -48,9 +48,9 @@ The in-game config screen exposes the same main values:
 
 This repository is the shared dependency for:
 
-- `Water-Physics-Overhaul-1.20.1`
-- `WPO-Environmental-Expansion-1.20.1`
-- `WPO-Hydraulic-Utilities-1.20.1`
+- `Water-Physics-Overhaul`
+- `WPO-Environmental-Expansion`
+- `WPO-Hydraulic-Utilities`
 
 If the base WPO mod or either add-on is being built from source, SKDS Core needs to be present in the expected sibling location.
 
@@ -62,9 +62,9 @@ If the base WPO mod or either add-on is being built from source, SKDS Core needs
 
 ## Related Repositories
 
-- [`Water-Physics-Overhaul-1.20.1`](https://github.com/dev-willbird1936/Water-Physics-Overhaul-1.20.1)
-- [`WPO-Environmental-Expansion-1.20.1`](https://github.com/dev-willbird1936/WPO-Environmental-Expansion-1.20.1)
-- [`WPO-Hydraulic-Utilities-1.20.1`](https://github.com/dev-willbird1936/WPO-Hydraulic-Utilities-1.20.1)
+- [`Water-Physics-Overhaul`](https://github.com/dev-willbird1936/Water-Physics-Overhaul)
+- [`WPO-Environmental-Expansion`](https://github.com/dev-willbird1936/WPO-Environmental-Expansion)
+- [`WPO-Hydraulic-Utilities`](https://github.com/dev-willbird1936/WPO-Hydraulic-Utilities)
 
 ## Build
 
@@ -75,3 +75,33 @@ Typical local build:
 ```powershell
 .\gradlew.bat build
 ```
+
+Explicit version build:
+
+```powershell
+.\gradlew.bat build -PmcVersion=1.20.1
+```
+
+Stage the release jar into the workspace release folder:
+
+```powershell
+.\gradlew.bat stageRelease -PmcVersion=1.20.1
+```
+
+Current workspace layout:
+
+```text
+..\SKDS-Core
+..\Water-Physics-Overhaul
+..\WPO-Environmental-Expansion
+..\WPO-Hydraulic-Utilities
+```
+
+Version-specific Minecraft and release values now live in `versions/<mcVersion>.properties`. For future ports, add a new version file and use a branch like `mc/1.21.1` when source compatibility starts to diverge.
+
+## Version Strategy
+
+- Stable repository name, without the Minecraft version in the repo title
+- `main` for the current maintained line
+- `mc/<minecraft-version>` branches when code starts to diverge between game versions
+- release tags in the form `v<minecraft-version>-<mod-version>`
