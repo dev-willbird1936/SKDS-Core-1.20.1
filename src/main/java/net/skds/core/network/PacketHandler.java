@@ -1,25 +1,27 @@
 package net.skds.core.network;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
-import net.skds.core.SKDSCore;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-public class PacketHandler {
-	private static final String PROTOCOL_VERSION = "1";
-	private static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(SKDSCore.MOD_ID, "network"), () -> PROTOCOL_VERSION, v -> true, v -> true);
+public final class PacketHandler {
+    private static final String PROTOCOL_VERSION = "1";
 
-	public static void send(PacketDistributor.PacketTarget target, Object message) {
-		CHANNEL.send(target, message);
-	}
-	
-	public static SimpleChannel get() {
-		return CHANNEL;
-	}
+    private PacketHandler() {
+    }
 
-	public static void init() {
-		int id = 0;
-		CHANNEL.registerMessage(id++, DebugPacket.class, DebugPacket::encoder, DebugPacket::decoder, DebugPacket::handle);
-	}
+    public static void init(IEventBus modBus) {
+        modBus.addListener(PacketHandler::registerPayloads);
+    }
+
+    public static void send(ServerPlayer target, DebugPacket message) {
+        PacketDistributor.sendToPlayer(target, message);
+    }
+
+    private static void registerPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(PROTOCOL_VERSION);
+        registrar.playToClient(DebugPacket.TYPE, DebugPacket.STREAM_CODEC, DebugPacket::handle);
+    }
 }

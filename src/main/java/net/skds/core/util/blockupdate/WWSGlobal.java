@@ -12,7 +12,7 @@ import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.skds.core.api.IWWS;
 import net.skds.core.api.IWWSG;
 import net.skds.core.events.OnWWSAttachEvent;
@@ -48,7 +48,7 @@ public class WWSGlobal implements IWWSG {
 
 	public WWSGlobal(Level w) {
 		world = w;
-		MinecraftForge.EVENT_BUS.post(new OnWWSAttachEvent(w, this));
+		NeoForge.EVENT_BUS.post(new OnWWSAttachEvent(w, this));
 		INSTANCES.add(this);
 	}
 

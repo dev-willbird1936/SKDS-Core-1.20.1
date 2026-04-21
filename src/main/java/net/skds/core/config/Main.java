@@ -2,19 +2,19 @@ package net.skds.core.config;
 
 import java.util.function.Function;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.skds.core.SKDSCore;
 
 public class Main {
 
-    public final ForgeConfigSpec.EnumValue<PerformancePreset> performancePreset;
-    public final ForgeConfigSpec.IntValue minBlockUpdates, timeoutCutoff;
+    public final ModConfigSpec.EnumValue<PerformancePreset> performancePreset;
+    public final ModConfigSpec.IntValue minBlockUpdates, timeoutCutoff;
 
     // public final ForgeConfigSpec.ConfigValue<ArrayList<String>> ss;
     // private final ForgeConfigSpec.IntValue maxFluidLevel;
 
-    public Main(ForgeConfigSpec.Builder innerBuilder) {
-        Function<String, ForgeConfigSpec.Builder> builder = name -> innerBuilder .translation(SKDSCore.MOD_ID + ".config." + name);
+    public Main(ModConfigSpec.Builder innerBuilder) {
+        Function<String, ModConfigSpec.Builder> builder = name -> innerBuilder.translation(SKDSCore.MOD_ID + ".config." + name);
 
         innerBuilder.push("Performance");
 

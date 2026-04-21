@@ -1,6 +1,6 @@
 package net.skds.core.events;
 
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 
 public class SyncTasksHookEvent extends Event {
 

@@ -17,7 +17,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.server.level.ServerPlayer;
 import net.skds.core.network.DebugPacket;
 import net.skds.core.network.PacketHandler;
 import net.skds.core.api.IWWS;
@@ -171,7 +171,7 @@ public abstract class BasicExecutor implements Runnable {
 
 	protected void debug(BlockPos pos) {
 		w.players().forEach((p) -> {
-			PacketHandler.send(PacketDistributor.PLAYER.with(() -> p), new DebugPacket(pos));
+			PacketHandler.send((ServerPlayer) p, new DebugPacket(pos));
 		});
 	}
 }

@@ -1,6 +1,6 @@
 package net.skds.core.multithreading;
 
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import net.skds.core.SKDSCoreConfig;
 import net.skds.core.events.SyncTasksHookEvent;
 
@@ -12,7 +12,7 @@ public class MTHooks {
 		TIME = SKDSCoreConfig.getTimeoutCutoff();
 		COUNTS = SKDSCoreConfig.getMinBlockUpdates();
 
-		MinecraftForge.EVENT_BUS.post(new SyncTasksHookEvent());
+		NeoForge.EVENT_BUS.post(new SyncTasksHookEvent());
 
 		///ThreadProvider.doSyncFork(WWSGlobal::nextTask);
 		try {

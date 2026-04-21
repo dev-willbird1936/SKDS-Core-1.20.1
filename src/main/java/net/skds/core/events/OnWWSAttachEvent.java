@@ -1,7 +1,7 @@
 package net.skds.core.events;
 
 import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
 import net.skds.core.util.blockupdate.WWSGlobal;
 
 public class OnWWSAttachEvent extends Event {
