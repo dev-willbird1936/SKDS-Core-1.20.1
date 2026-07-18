@@ -15,9 +15,9 @@ public class UniversalWorkerThread extends Thread implements ISKDSThread {
 	private Cycler<Function<Integer, ITaskRunnable>> cycler = new Cycler<>();
 
 	//private Supplier<ITaskRunnable> asyncSup = (() -> null);
-	public boolean isDone = true;
-	public boolean cont = true;
-	public boolean yeld = true;
+	public volatile boolean isDone = true;
+	public volatile boolean cont = true;
+	public volatile boolean yeld = true;
 	public final int num;
 
 	public UniversalWorkerThread(int num) {
