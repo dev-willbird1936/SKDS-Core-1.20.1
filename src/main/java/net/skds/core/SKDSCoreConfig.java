@@ -82,6 +82,10 @@ public class SKDSCoreConfig {
         };
     }
 
+    public static boolean isMultithreadedFluidTickingEnabled() {
+        return COMMON.multithreadedFluidTicking.get();
+    }
+
     public static void setPerformancePreset(PerformancePreset preset) {
         COMMON.performancePreset.set(preset);
     }

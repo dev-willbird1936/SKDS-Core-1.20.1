@@ -10,16 +10,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.server.level.ChunkHolder;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.skds.core.api.multithreading.ISKDSThread;
-import net.skds.core.api.IServerChunkProvider;
 
 @Mixin(value = { ServerChunkCache.class })
-public abstract class ServerChunkProviderMixin implements IServerChunkProvider {
+public abstract class ServerChunkProviderMixin {
 
     @Final
     @Shadow
@@ -28,22 +27,19 @@ public abstract class ServerChunkProviderMixin implements IServerChunkProvider {
     @Shadow
     private Thread mainThread;
 
-    public ChunkAccess getCustomChunk(long l) {
-        ChunkHolder chunkHolder = this.getVisibleChunkIfPresent(l);
-        if (chunkHolder == null) {
-            return null;
-        }
-        return chunkHolder.getLastAvailable();
-    }
-
     @Shadow
     private ChunkHolder getVisibleChunkIfPresent(long l) {
         return null;
     }
 
+	// Only SKDS worker threads should be tricked into "I'm the main thread" here (so their
+	// getChunk calls resolve synchronously instead of vanilla's real main-thread proxy+join).
+	// Unconditionally redirecting broke that proxy/join for EVERY caller, including vanilla's
+	// own chunk-generation worker pool - which produced a world-creation hang.
 	@Redirect(method = "getChunk", at = @At(value = "INVOKE", ordinal = 0, target = "Ljava/lang/Thread;currentThread()Ljava/lang/Thread;"))
 	public Thread aaa(int x, int z, ChunkStatus status, boolean b) {
-		return mainThread;
+		Thread current = Thread.currentThread();
+		return current instanceof ISKDSThread ? mainThread : current;
 	}
 
     @Inject(method = "storeInCache", at = @At(value = "HEAD"), cancellable = true)

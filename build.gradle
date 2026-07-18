@@ -67,9 +67,6 @@ repositories {
 }
 
 sourceSets.main.java.exclude(
-    'net/skds/core/mixins/multithreading/ChunkSectionMixin.java',
-    'net/skds/core/mixins/multithreading/PalettedContainerMixin.java',
-    'net/skds/core/mixins/multithreading/ServerChunkProviderMixin.java',
     'net/skds/core/mixins/multithreading/ServerTickListMixin.jav',
     'net/skds/core/mixins/custom/WorldMixin.java',
     'net/skds/core/client/**'

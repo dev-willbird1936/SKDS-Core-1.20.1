@@ -9,6 +9,7 @@ public class Main {
 
     public final ModConfigSpec.EnumValue<PerformancePreset> performancePreset;
     public final ModConfigSpec.IntValue minBlockUpdates, timeoutCutoff;
+    public final ModConfigSpec.BooleanValue multithreadedFluidTicking;
 
     // public final ForgeConfigSpec.ConfigValue<ArrayList<String>> ss;
     // private final ForgeConfigSpec.IntValue maxFluidLevel;
@@ -26,6 +27,15 @@ public class Main {
         timeoutCutoff = builder.apply("timeout")
                 .comment("Manual value used only when performancePreset=CUSTOM. Time before tick end to stop synchronized tasks (ms).")
                 .defineInRange("timeout", 4, 0, 50);
+
+        innerBuilder.pop();
+
+        innerBuilder.push("Multithreading");
+
+        multithreadedFluidTicking = builder.apply("multithreadedFluidTicking")
+                .comment("Run fluid physics tasks across worker threads instead of the main thread. "
+                        + "Disable to force single-threaded ticking (e.g. if you suspect it of causing instability).")
+                .define("multithreadedFluidTicking", true);
 
         innerBuilder.pop();
     }

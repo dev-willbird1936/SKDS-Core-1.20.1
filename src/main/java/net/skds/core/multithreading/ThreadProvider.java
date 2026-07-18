@@ -6,7 +6,11 @@ import net.skds.core.api.multithreading.ITaskRunnable;
 
 public class ThreadProvider {
 
-	public static int PROCESSORS = Runtime.getRuntime().availableProcessors();
+	// Capped at MAX_WORKERS: TaskBlocker's conflict check is a single global synchronized
+	// scan over all workers, and WorldWorkSet.nextTask only ever hands out indices below
+	// this bound. More processors than this would just spin up idle threads.
+	public static final int MAX_WORKERS = 4;
+	public static int PROCESSORS = Math.min(MAX_WORKERS, Runtime.getRuntime().availableProcessors());
 	public static UniversalWorkerThread[] THREADS = UniversalWorkerThread.create(PROCESSORS);
 
 	
